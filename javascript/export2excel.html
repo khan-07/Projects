@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script type="text/javascript" src="export2excel.js"></script>
+</head>
+<body>
+<table id='export'>
+    <thead><tr><th>1</th><th>2</th><th>3</th><th>4</th></tr></thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>Hello</td>
+            <td>2nd Column</td>
+            <td>3rd Column</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Hello</td>
+            <td>2nd Column</td>
+            <td>3rd Column</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>Hello</td>
+            <td>2nd Column</td>
+            <td>3rd Column</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>Hello</td>
+            <td>2nd Column</td>
+            <td>3rd Column</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>Hello</td>
+            <td>2nd Column</td>
+            <td>3rd Column</td>
+        </tr>
+    </tbody>
+</table>
+<button><a id='ab' href="" >jambo</a></button>
+</body>
+<script type="text/javascript">
+    /*var bc=document.getElementById('ab');
+    bc.onclick=function()
+                {
+                    this.href= n
+                };*/
+    //bc.onclick="data:text/html," + document.getElementById("content").innerHTML;
+    new export2excel('export','new.pdf').export();
+</script>
+</html>
