@@ -17,9 +17,10 @@ export2excel.prototype.export=function()
                                 if (link.download!==undefined)
                                 {
                                     
+                                   //browser is either chrome of mozilla
                                     //call export2excel.extract_html
                                     export2excel.extract_html.call(this);
-                                    //browser is either chrome of mozilla
+                                    
                                     this.table_html="data:text/html,"+this.table_html;
                                     link.href=this.table_html;
                                     link.download=this.file_name;
@@ -34,7 +35,6 @@ export2excel.prototype.export=function()
                                 else
                                 {
                                     //browser is internet explorer
-                                    //safari is bad, very bad
                                     export2excel.extract_html.call(this);
                                     //create a new blob
                                     var blob=new Blob([this.table_html],{type:'text/plain'});
@@ -47,42 +47,51 @@ export2excel.prototype.export=function()
 //below this are all static methods
 export2excel.extract_html=function()
                         {
-                                //get the elemetn by the table id and get all the tbody tags in it.
-                                var tbody=document.getElementById(this.table_id).getElementsByTagName('tbody');
+                                //specifications for excel
+                                var unknown="<!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>"+
+                                            "<x:Name>Table0</x:Name><x:WorksheetOptions><x:DisplayGridlines/>"+
+                                            "</x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->";
+                                //get the table by id
+                                var table=document.getElementById(this.table_id);
+                                //get the th elements in thead
+                                var th=table.getElementsByTagName('thead')[0].getElementsByTagName('th');
+                                //extract the the html for the specified tag from the object
+                                this.table_html=export2excel.extract_tag.call(th,'th');
+                                //get the element by the table id and get all the tbody tags in it.
+                                var tbody=table.getElementsByTagName('tbody');
                                 var row;
                                 //iterate over all tbody elements
                                 for (var tb_counter=0; tb_counter<tbody.length; tb_counter++)
                                 {
-                                    //get all td tags inside the current tbody
+                                    //get all tr tags inside the current tbody
                                     var tr=tbody[tb_counter].getElementsByTagName('tr');
                                     for (var tr_counter=0; tr_counter<tr.length; tr_counter++)
                                     {
                                             var td=tr[tr_counter].getElementsByTagName('td');
                                             //call the extract_td function to get all the td values
-                                            row=export2excel.extract_td.call(td);
-                                            //push the returned array field table_data
+                                            row=export2excel.extract_tag.call(td,'td');
+                                            //concatenate the string
                                             this.table_html=this.table_html+row;    
                                     }
                                     
                                 }
-                                
-                                this.table_html="<table style='border:1px solid black'>"+
-                                                        this.table_html+'</table>';
+                                //final html to be saved                                
+                                this.table_html="<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:x='urn:schemas-microsoft-com:office:excel'"+ 
+                                                    " <head>"+unknown+
+                                                    "</head><body><table>"+
+                                                        this.table_html+'</table></body></html>';
 
-                                console.log(this.table_html);
                         }                           
-export2excel.extract_td=function()
+export2excel.extract_tag=function(tag)
                         {
-                            var holder="<tr style='border:1px solid black'>";
+                            var holder="<tr>";
                             for (var td_counter=0; td_counter<this.length; td_counter++ )
                             {
                                 //get the innertext of the td currently iterating over
-                                holder=holder+'<td>'+this[td_counter].innerHTML+'</td>';
+                                holder=holder+'<'+tag+'>'+this[td_counter].innerHTML+'</'+tag+'>';
                             }
                             holder=holder+'</tr>';
-                            //
-                            //console.log(holder,'holder in extract');
-                            //return an array containing the innertext of td
+                            //return the string containing the html for the specifed tag
                             return holder;
 
                         };
